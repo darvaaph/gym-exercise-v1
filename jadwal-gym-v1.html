@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Latihan Gym Interaktif (Lacak Set)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4; /* Soft beige background */
+        }
+        .day-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .day-btn.active {
+            background-color: #1E3A8A; /* Deep blue */
+            color: #FFFFFF;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .exercise-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+        }
+        .exercise-group h3 {
+            color: #1E3A8A; /* Deep blue for group titles */
+            font-weight: 700;
+            border-bottom: 2px solid #DBEAFE; /* Light blue border */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .editable-list {
+            min-height: 100px; /* Ensure editable area is visible */
+            border: 1px dashed #BEE3F8; /* Light blue dashed border */
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #F0F8FF; /* Lighter background for editable area */
+            cursor: text;
+        }
+        .exercise-list-item {
+            padding: 0.25rem 0;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        .exercise-item-db {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .exercise-item-db:hover {
+            background-color: #F3F4F6;
+        }
+        .exercise-detail-section img,
+        .exercise-detail-section iframe {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        /* Timer Styles */
+        .timer-container {
+            background-color: #1E3A8A; /* Deep blue */
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .timer-controls button {
+            background-color: #3B82F6; /* Brighter blue */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .timer-controls button:hover {
+            background-color: #2563EB; /* Darker blue on hover */
+        }
+        .timer-presets {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .timer-presets button {
+            background-color: #5E98E3; /* Light blue */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        .timer-presets button:hover {
+            background-color: #3B82F6;
+        }
+        /* Checkbox specific styles */
+        .exercise-item-display {
+            display: flex;
+            align-items: center; /* Vertically center items */
+            justify-content: space-between; /* Push text to left, checkbox to right */
+            gap: 0.5rem;
+            padding: 0.25rem 0; /* Add some padding */
+        }
+        .exercise-item-display .exercise-name {
+            flex-grow: 1; /* Allow name to take available space */
+            line-height: 1.5rem; /* Ensure consistent line height */
+        }
+        .exercise-item-display input[type="checkbox"] {
+            /* Styling for checkbox */
+            -webkit-appearance: none; /* Hide default checkbox */
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px; /* Custom width */
+            height: 20px; /* Custom height */
+            border: 2px solid #6B7280; /* Border color */
+            border-radius: 4px; /* Slightly rounded corners */
+            background-color: #E5E7EB; /* Light grey background */
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0; /* Prevent checkbox from shrinking */
+        }
+        .exercise-item-display input[type="checkbox"]:checked {
+            background-color: #1E3A8A; /* Blue when checked */
+            border-color: #1E3A8A;
+        }
+        .exercise-item-display input[type="checkbox"]:checked::after {
+            content: '✔'; /* Checkmark symbol */
+            display: block;
+            color: white;
+            font-size: 14px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+        }
+        .exercise-item-display.completed .exercise-name {
+            text-decoration: line-through;
+            color: #6B7280; /* Gray-500 */
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="text-center py-8">
+        <h1 class="text-4xl font-bold text-gray-900">🏋️‍♂️ Jadwal Latihan Anda</h1>
+        <p class="text-lg text-gray-600 mt-2">Program Latihan Push / Pull / Legs</p>
+    </header>
+
+    <main class="container mx-auto px-4">
+        <section id="weekly-schedule" class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 text-center md:text-left mb-4 md:mb-0">Pilih Hari Latihan</h2>
+                <button id="openDatabaseBtn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-indigo-700 transition-colors w-full md:w-auto">Jelajahi Database Latihan 📚</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4 text-center">
+                <button data-day="1" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Senin<span class="block text-sm font-normal text-gray-500">Istirahat</span></button>
+                <button data-day="2" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Selasa<span class="block text-sm font-normal text-blue-600">Push</span></button>
+                <button data-day="3" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Rabu<span class="block text-sm font-normal text-green-600">Pull</span></button>
+                <button data-day="4" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Kamis<span class="block text-sm font-normal text-gray-500">Istirahat</span></button>
+                <button data-day="5" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Jumat<span class="block text-sm font-normal text-blue-600">Push</span></button>
+                <button data-day="6" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Sabtu<span class="block text-sm font-normal text-red-600">Legs</span></button>
+                <button data-day="0" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Minggu<span class="block text-sm font-normal text-green-600">Pull</span></button>
+            </div>
+        </section>
+
+        <section id="workout-details" class="min-h-[400px]">
+            </section>
+
+        <section id="rest-timer" class="timer-container mt-12 hidden">
+            <h2 class="text-2xl font-bold mb-4">Timer Istirahat</h2>
+            <div id="timerDisplay" class="timer-display">00:00</div>
+            <div class="timer-controls space-x-4">
+                <button id="startTimerBtn">Mulai</button>
+                <button id="pauseTimerBtn">Jeda</button>
+                <button id="resetTimerBtn">Reset</button>
+            </div>
+            <div class="timer-presets">
+                <button data-seconds="30">30s</button>
+                <button data-seconds="60">60s</button>
+                <button data-seconds="90">90s</button>
+                <button data-seconds="120">120s</button>
+            </div>
+        </section>
+
+        <section id="tips" class="mt-12">
+            <div class="exercise-card">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">✅ Tips Penting untuk Latihan Anda</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Progresif Overload:</strong> Tingkatkan beban/repetisi secara bertahap untuk terus berkembang.</li>
+                    <li><strong>Prioritaskan Bentuk:</strong> Teknik yang benar lebih penting dari beban berat untuk hasil maksimal dan menghindari cedera.</li>
+                    <li><strong>Pemanasan & Pendinginan:</strong> Selalu lakukan pemanasan dinamis sebelum dan peregangan statis sesudah latihan.</li>
+                    <li><strong>Nutrisi & Tidur:</strong> Pastikan asupan protein cukup dan tidur berkualitas adalah kunci pemulihan dan pertumbuhan otot.</li>
+                    <li><strong>Dengarkan Tubuh:</strong> Istirahat jika Anda merasa terlalu lelah atau sakit. Pemulihan adalah bagian dari latihan.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 mt-8 text-gray-500">
+        <p>© 2025 Jadwal Latihan Gym Darva.</p>
+    </footer>
+
+    <div id="exerciseDatabaseModal" class="modal-overlay hidden">
+        <div class="modal-content w-full md:w-3/4 lg:w-2/3">
+            <button id="closeDatabaseModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">✖</button>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Database Latihan</h2>
+            
+            <div class="mb-4">
+                <input type="text" id="exerciseSearchInput" placeholder="Cari latihan..." class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="col-span-1">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Daftar Latihan</h3>
+                    <div id="exerciseList" class="max-h-[40vh] overflow-y-auto border border-gray-200 rounded-md">
+                        </div>
+                </div>
+                <div class="col-span-1 exercise-detail-section bg-gray-50 p-4 rounded-md hidden" id="exerciseDetailView">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3" id="detailExerciseName"></h3>
+                    <img id="detailExerciseImage" src="" alt="Gambar Latihan" class="mb-4 hidden">
+                    <div class="relative pb-[56.25%] h-0 mb-4 hidden" id="detailExerciseVideoContainer">
+                        <iframe id="detailExerciseVideo" class="absolute top-0 left-0 w-full h-full rounded-md" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <p class="text-gray-700 mb-3" id="detailExerciseDescription"></p>
+                    <h4 class="font-semibold text-gray-700 mb-2">Instruksi:</h4>
+                    <ol class="list-decimal list-inside text-gray-700 space-y-1" id="detailExerciseInstructions"></ol>
+                    <p class="text-sm text-gray-500 mt-2" id="detailExerciseMuscleGroup"></p>
+                    <button id="addExerciseToWorkoutBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition-colors w-full">Tambahkan ke Jadwal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data latihan default
+        const defaultWorkoutData = {
+            '2': {
+                title: 'Push Day (Dada, Bahu, Trisep)',
+                groups: {
+                    'Dada': ['Barbell Bench Press', 'Incline Dumbbell Press', 'Dumbbell Flyes (Flat/Incline)', 'Cable Crossover'],
+                    'Bahu (Depan & Samping)': ['Overhead Dumbbell Press', 'Arnold Press', 'Lateral Raises (Dumbbell/Cable)', 'Front Raises (Dumbbell/Barbell)'],
+                    'Trisep': ['Close-Grip Bench Press', 'Dips (Weighted/Assisted)', 'Triceps Pushdown (Tali/Bar)', 'Overhead Dumbbell Extension', 'Skullcrushers']
+                }
+            },
+            '3': {
+                title: 'Pull Day (Punggung, Bisep)',
+                groups: {
+                    'Punggung': ['Barbell Rows (Bent-over)', 'Lat Pulldown', 'Seated Cable Row', 'Pull-ups / Chin-ups (Assisted jika perlu)', 'Face Pulls'],
+                    'Bisep': ['Barbell Curls', 'Dumbbell Curls (Alternating/Hammer/Supinating)', 'Preacher Curls', 'Cable Curls']
+                }
+            },
+            '5': {
+                title: 'Push Day (Variasi)',
+                groups: {
+                    'Dada': ['Dumbbell Bench Press (Flat/Decline)', 'Machine Chest Press', 'Pec Deck Fly', 'Push-ups (Weighted/Variasi)'],
+                    'Bahu (Depan & Samping)': ['Machine Shoulder Press', 'Upright Rows (Hati-hati jika tidak nyaman)', 'Single-Arm Cable Lateral Raise', 'Plate Front Raise'],
+                    'Trisep': ['Cable Rope Pushdown', 'Single-Arm Overhead Cable Extension', 'Dumbbell Kickbacks']
+                }
+            },
+            '6': {
+                title: 'Leg Day',
+                groups: {
+                    'Paha Depan & Belakang, Bokong': ['Barbell Squats', 'Romanian Deadlifts (RDLs)', 'Leg Press', 'Walking Lunges (Dumbbell/Barbell)', 'Leg Extension', 'Leg Curl'],
+                    'Betis': ['Standing Calf Raises', 'Seated Calf Raises']
+                }
+            },
+            '0': {
+                title: 'Pull Day (Fokus Bahu Belakang)',
+                groups: {
+                    'Punggung': ['Deadlifts (Opsional)', 'T-Bar Rows', 'Single-Arm Dumbbell Rows', 'Straight-Arm Pulldown'],
+                    'Bisep': ['Concentration Curls', 'Hammer Curls', 'Reverse Curls'],
+                    'Bahu Belakang (Rear Delts)': ['Face Pulls (menggunakan tali)', 'Reverse Pec Deck Fly', 'Bent-Over Dumbbell Lateral Raises']
+                }
+            },
+            '1': { title: 'Istirahat Total', groups: {} },
+            '4': { title: 'Istirahat Aktif', groups: { 'Saran': ['Jalan santai', 'Yoga ringan', 'Peregangan', 'Kardio intensitas rendah'] } }
+        };
+
+        // --- DATABASE LATIHAN ---
+        const exerciseDatabase = [
+            {
+                id: 'ex001', name: 'Barbell Bench Press', muscleGroup: 'Dada',
+                description: 'Latihan dasar untuk membangun massa dan kekuatan dada. Melibatkan dada, bahu depan, dan trisep.',
+                instructions: [
+                    'Berbaring telentang di bangku datar, kaki menapak lantai.',
+                    'Genggam barbel sedikit lebih lebar dari lebar bahu, dengan tangan di atas (overhand grip).',
+                    'Turunkan barbel secara perlahan ke arah dada bagian tengah.',
+                    'Dorong barbel kembali ke posisi awal, kunci siku di bagian atas gerakan.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/004AAD/FFFFFF?text=Bench+Press',
+                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI6' // Contoh YouTube embed
+            },
+            {
+                id: 'ex002', name: 'Dumbbell Curl', muscleGroup: 'Bisep',
+                description: 'Latihan isolasi efektif untuk bisep, memungkinkan rentang gerak penuh dan aktivasi serat otot yang baik.',
+                instructions: [
+                    'Berdiri tegak atau duduk di bangku dengan punggung lurus, pegang dumbel di masing-masing tangan, telapak tangan menghadap ke depan.',
+                    'Gulung dumbel ke atas menuju bahu sambil mengencangkan bisep, jaga siku tetap di sisi tubuh.',
+                    'Kontraksikan bisep di puncak gerakan.',
+                    'Turunkan dumbel secara perlahan kembali ke posisi awal dengan kontrol.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/0062D5/FFFFFF?text=Dumbbell+Curl',
+                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI7'
+            },
+            {
+                id: 'ex003', name: 'Barbell Squats', muscleGroup: 'Kaki',
+                description: 'Salah satu latihan compound terbaik untuk melatih seluruh tubuh bagian bawah dan inti. Membangun kekuatan dan massa kaki secara keseluruhan.',
+                instructions: [
+                    'Posisikan barbel di punggung bagian atas (otot trapezius), pegang barbel dengan tangan di atas bahu.',
+                    'Berdiri dengan kaki selebar bahu, jari kaki sedikit mengarah keluar.',
+                    'Mulai gerakan dengan menekuk lutut dan pinggul, seolah duduk di kursi. Jaga punggung tetap lurus.',
+                    'Turunkan tubuh hingga paha sejajar lantai atau lebih rendah, jaga tumit tetap di lantai.',
+                    'Dorong kembali ke posisi awal, fokus pada kontraksi otot paha dan bokong.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/5E98E3/FFFFFF?text=Barbell+Squat',
+                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI8'
+            },
+            {
+                id: 'ex004', name: 'Lat Pulldown', muscleGroup: 'Punggung',
+                description: 'Latihan yang bagus untuk menargetkan otot punggung bagian lebar (latissimus dorsi) untuk membangun punggung yang lebar dan kuat.',
+                instructions: [
+                    'Duduk di mesin lat pulldown, sesuaikan bantalan lutut agar pas.',
+                    'Genggam bilah lebar dengan telapak tangan menghadap ke depan (overhand grip).',
+                    'Tarik bilah ke bawah menuju dada bagian atas, fokus pada menarik siku ke bawah dan ke belakang.',
+                    'Kontraksikan otot punggung di bagian bawah gerakan.',
+                    'Biarkan bilah kembali ke posisi awal secara perlahan dan terkontrol, regangkan lat Anda.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/A8C7F4/000000?text=Lat+Pulldown',
+                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI9'
+            },
+            {
+                id: 'ex005', name: 'Overhead Dumbbell Press', muscleGroup: 'Bahu',
+                description: 'Latihan efektif untuk melatih bahu (deltoid) dan trisep, bisa dilakukan duduk atau berdiri.',
+                instructions: [
+                    'Duduk atau berdiri tegak, pegang dumbel di setiap tangan setinggi bahu, telapak tangan menghadap ke depan atau sedikit ke dalam.',
+                    'Dorong dumbel lurus ke atas hingga lengan terentang penuh di atas kepala, tapi jangan kunci siku.',
+                    'Turunkan dumbel secara perlahan kembali ke posisi awal dengan kontrol.',
+                    'Jaga inti tubuh tetap kencang sepanjang gerakan.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/004AAD/FFFFFF?text=Overhead+Press',
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls0'
+            },
+            {
+                id: 'ex006', name: 'Romanian Deadlifts (RDLs)', muscleGroup: 'Kaki',
+                description: 'Latihan utama untuk hamstring dan bokong, berfokus pada gerakan "hinging" pinggul yang aman dan efektif.',
+                instructions: [
+                    'Berdiri tegak dengan barbel atau dumbel di depan paha, genggam dengan tangan lebih lebar dari lebar bahu.',
+                    'Jaga punggung lurus dan sedikit tekuk lutut.',
+                    'Mulai gerakan dengan mendorong pinggul ke belakang, biarkan beban turun di depan kaki Anda.',
+                    'Rasakan regangan di hamstring. Turunkan beban sampai Anda merasakan regangan yang baik atau sebelum punggung Anda melengkung.',
+                    'Dorong pinggul ke depan untuk kembali ke posisi awal, kontraksikan bokong di bagian atas.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/0062D5/FFFFFF?text=RDL',
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls1'
+            },
+            {
+                id: 'ex007', name: 'Cable Crossover', muscleGroup: 'Dada',
+                description: 'Latihan isolasi untuk dada bagian dalam dan luar, memberikan kontraksi yang kuat pada otot dada.',
+                instructions: [
+                    'Berdiri di tengah mesin kabel crossover, pegang pegangan di kedua tangan, pastikan katrol berada di ketinggian yang sesuai (biasanya setinggi bahu atau sedikit lebih tinggi).',
+                    'Condongkan tubuh sedikit ke depan, dengan sedikit tekuk pada siku.',
+                    'Satukan pegangan di depan dada, fokus pada kontraksi otot dada.',
+                    'Kembali ke posisi awal secara perlahan, rasakan regangan di dada Anda.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/5E98E3/FFFFFF?text=Cable+Crossover',
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls2'
+            },
+            {
+                id: 'ex008', name: 'Face Pulls', muscleGroup: 'Bahu',
+                description: 'Latihan yang sangat baik untuk melatih bahu belakang (rear delts) dan otot-otot rotator cuff, meningkatkan kesehatan bahu dan postur.',
+                instructions: [
+                    'Atur katrol kabel setinggi wajah atau sedikit lebih tinggi, gunakan tali pegangan.',
+                    'Mundur beberapa langkah dari mesin untuk mendapatkan ketegangan pada kabel.',
+                    'Tarik tali ke arah wajah Anda, fokus pada menarik siku ke belakang dan ke luar. Pikirkan untuk memutar bahu Anda ke luar.',
+                    'Remas bahu belakang Anda di puncak gerakan, lalu lepaskan secara perlahan.'
+                ],
+                imageUrl: 'https://placehold.co/400x250/A8C7F4/000000?text=Face+Pull',
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls3'
+            }
+        ];
+        // --- AKHIR DATABASE LATIHAN ---
+
+
+        // Muat data kustom dari localStorage jika ada
+        let customWorkoutData = JSON.parse(localStorage.getItem('customGymWorkout')) || {};
+        // Data status checkbox latihan yang diselesaikan per tanggal sesi
+        let completedExercisesData = JSON.parse(localStorage.getItem('completedGymExercises')) || {};
+
+        const detailsContainer = document.getElementById('workout-details');
+        const dayButtons = document.querySelectorAll('.day-btn');
+        let currentActiveDay = null;
+        let isEditMode = false;
+        let currentActiveGroupForAdding = null; // Variabel untuk melacak kelompok otot yang sedang diedit
+
+        // --- Variabel Timer ---
+        let timerInterval;
+        let timeLeft = 0; // Waktu tersisa dalam detik
+        let isTimerRunning = false;
+        let initialTimerDuration = 0; // Untuk reset
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const pauseTimerBtn = document.getElementById('pauseTimerBtn');
+        const resetTimerBtn = document.getElementById('resetTimerBtn');
+        const timerPresets = document.querySelectorAll('#rest-timer .timer-presets button');
+        const restTimerSection = document.getElementById('rest-timer');
+        // --- Akhir Variabel Timer ---
+
+        function getTodayDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            if (timeLeft === 0 && initialTimerDuration > 0) { // Jika timer direset dan ingin mulai lagi
+                timeLeft = initialTimerDuration;
+            } else if (timeLeft === 0 && initialTimerDuration === 0) { // Jika belum ada durasi diatur
+                alert('Pilih durasi timer terlebih dahulu atau atur waktu manual.');
+                isTimerRunning = false;
+                return;
+            }
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    timerDisplay.textContent = formatTime(timeLeft);
+                } else {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    timerDisplay.textContent = "00:00";
+                    alert('Waktu istirahat selesai!');
+                    // Bisa tambahkan suara notifikasi di sini
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeLeft = initialTimerDuration; // Kembali ke durasi awal
+            timerDisplay.textContent = formatTime(timeLeft);
+        }
+
+
+        function renderWorkoutContent(day, data, editing) {
+            const todayDate = getTodayDate();
+            let content = '';
+            content += `<div class="exercise-card animate-fade-in">`;
+            content += `<div class="flex justify-between items-center mb-6">`;
+            content += `<h2 class="text-3xl font-bold text-gray-900">${data.title}</h2>`;
+            content += `<div class="flex space-x-2">`;
+            content += `<button id="editBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition-colors ${editing ? 'hidden' : ''}">Edit</button>`;
+            content += `<button id="saveBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-green-700 transition-colors ${!editing ? 'hidden' : ''}">Simpan</button>`;
+            content += `</div></div>`;
+            
+            const groups = Object.keys(data.groups);
+            if (groups.length > 0) {
+                content += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`;
+                groups.forEach(groupName => {
+                    content += `<div class="exercise-group">`;
+                    content += `<div class="flex justify-between items-center mb-3">`;
+                    content += `<h3>${groupName}</h3>`;
+                    if (editing) {
+                        content += `<button class="add-exercise-to-group-btn bg-blue-500 text-white text-xs px-2 py-1 rounded-md hover:bg-blue-600 transition-colors" data-group="${groupName}">+ Tambah</button>`;
+                    }
+                    content += `</div>`; // End flex for group title and button
+                    
+                    if (editing) {
+                        content += `<div class="editable-list" contenteditable="true" data-group="${groupName}">`;
+                        data.groups[groupName].forEach(exercise => {
+                            content += `<div class="exercise-list-item">${exercise}</div>`;
+                        });
+                        content += `</div>`;
+                    } else {
+                        content += `<ul class="list-disc list-inside space-y-2 text-gray-700">`;
+                        data.groups[groupName].forEach(exercise => {
+                            const isCompleted = completedExercisesData[todayDate]?.[day]?.[exercise] || false;
+                            content += `<li data-exercise-name="${exercise}" class="flex items-center">`; // Flex container for alignment
+                            content += `<span class="exercise-item-display ${isCompleted ? 'completed' : ''}">`; // Apply completed class here
+                            content += `<span class="exercise-name">${exercise}</span>`; // Text
+                            content += `<input type="checkbox" class="exercise-checkbox ml-auto" ${isCompleted ? 'checked' : ''}>`; // Checkbox to the right
+                            content += `</span>`;
+                            content += `</li>`;
+                        });
+                        content += `</ul>`;
+                    }
+                    content += `</div>`;
+                });
+                content += `</div>`;
+            } else {
+                content += `<p class="text-center text-gray-600 text-lg mt-8">Manfaatkan hari ini untuk pemulihan otot dan energi. Tubuh Anda butuh istirahat untuk tumbuh lebih kuat!</p>`;
+            }
+
+            content += `</div>`;
+            detailsContainer.innerHTML = content;
+        }
+
+        function displayWorkout(day, editing = false) {
+            currentActiveDay = day;
+            isEditMode = editing;
+
+            // Prioritaskan data kustom, jika tidak ada, gunakan default
+            const dataToDisplay = customWorkoutData[day] || defaultWorkoutData[day];
+            
+            renderWorkoutContent(day, dataToDisplay, editing);
+
+            // Tambahkan event listener untuk tombol Edit/Save
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+
+            if (editBtn) {
+                editBtn.onclick = () => displayWorkout(currentActiveDay, true);
+            }
+            if (saveBtn) {
+                saveBtn.onclick = saveWorkout;
+            }
+
+            // Tambahkan event listener untuk tombol "Tambah Latihan" per kelompok otot
+            if (editing) {
+                document.querySelectorAll('.add-exercise-to-group-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        currentActiveGroupForAdding = e.target.dataset.group;
+                        document.getElementById('openDatabaseBtn').click(); // Membuka modal database
+                    });
+                });
+            } else {
+                // Tambahkan event listener untuk checkbox latihan
+                document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const li = e.target.closest('li');
+                        const exerciseName = li.dataset.exerciseName;
+                        const isChecked = e.target.checked;
+                        toggleExerciseCompletion(currentActiveDay, exerciseName, isChecked);
+                    });
+                });
+            }
+            
+            dayButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.day === day) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Tampilkan atau sembunyikan timer berdasarkan apakah ada latihan
+            if (dataToDisplay.groups && Object.keys(dataToDisplay.groups).length > 0) {
+                restTimerSection.classList.remove('hidden');
+            } else {
+                restTimerSection.classList.add('hidden');
+            }
+        }
+
+        function saveWorkout() {
+            const currentDayData = {
+                title: defaultWorkoutData[currentActiveDay].title, // Judul tetap dari default
+                groups: {}
+            };
+
+            document.querySelectorAll('.editable-list').forEach(listDiv => {
+                const groupName = listDiv.dataset.group;
+                const exercises = [];
+                listDiv.innerText.split('\n').forEach(line => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.length > 0) {
+                        exercises.push(trimmedLine);
+                    }
+                });
+                currentDayData.groups[groupName] = exercises;
+            });
+
+            customWorkoutData[currentActiveDay] = currentDayData;
+            localStorage.setItem('customGymWorkout', JSON.stringify(customWorkoutData));
+            
+            displayWorkout(currentActiveDay, false); // Setelah menyimpan, tampilkan kembali dalam mode tampilan
+            alert('Perubahan jadwal berhasil disimpan!');
+        }
+
+        function toggleExerciseCompletion(dayId, exerciseName, isCompleted) {
+            const todayDate = getTodayDate();
+            if (!completedExercisesData[todayDate]) {
+                completedExercisesData[todayDate] = {};
+            }
+            if (!completedExercisesData[todayDate][dayId]) {
+                completedExercisesData[todayDate][dayId] = {};
+            }
+            completedExercisesData[todayDate][dayId][exerciseName] = isCompleted;
+            localStorage.setItem('completedGymExercises', JSON.stringify(completedExercisesData));
+
+            // Perbarui tampilan item latihan secara langsung
+            const exerciseLi = document.querySelector(`li[data-exercise-name="${exerciseName}"]`);
+            if (exerciseLi) {
+                const exerciseDisplaySpan = exerciseLi.querySelector('.exercise-item-display');
+                if (exerciseDisplaySpan) {
+                    if (isCompleted) {
+                        exerciseDisplaySpan.classList.add('completed');
+                    } else {
+                        exerciseDisplaySpan.classList.remove('completed');
+                    }
+                }
+            }
+        }
+
+
+        dayButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const day = button.dataset.day;
+                displayWorkout(day, false); // Selalu mulai dalam mode tampilan
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Logic for Exercise Database Modal ---
+            const exerciseDatabaseModal = document.getElementById('exerciseDatabaseModal');
+            const openDatabaseBtn = document.getElementById('openDatabaseBtn');
+            const closeDatabaseModalBtn = document.getElementById('closeDatabaseModalBtn');
+            const exerciseListDiv = document.getElementById('exerciseList');
+            const exerciseSearchInput = document.getElementById('exerciseSearchInput');
+            const exerciseDetailView = document.getElementById('exerciseDetailView');
+            const detailExerciseName = document.getElementById('detailExerciseName');
+            const detailExerciseImage = document.getElementById('detailExerciseImage');
+            const detailExerciseVideoContainer = document.getElementById('detailExerciseVideoContainer');
+            const detailExerciseVideo = document.getElementById('detailExerciseVideo');
+            const detailExerciseDescription = document.getElementById('detailExerciseDescription');
+            const detailExerciseInstructions = document.getElementById('detailExerciseInstructions');
+            const detailExerciseMuscleGroup = document.getElementById('detailExerciseMuscleGroup');
+            const addExerciseToWorkoutBtn = document.getElementById('addExerciseToWorkoutBtn');
+
+
+            openDatabaseBtn.addEventListener('click', () => {
+                exerciseDatabaseModal.classList.remove('hidden');
+                renderExerciseList(exerciseDatabase); // Tampilkan semua latihan saat modal dibuka
+                exerciseDetailView.classList.add('hidden'); // Sembunyikan detail saat pertama dibuka
+                exerciseSearchInput.value = ''; // Kosongkan input pencarian
+                // Sembunyikan tombol "Tambahkan ke Jadwal" jika tidak dalam mode edit
+                if (!isEditMode) {
+                    addExerciseToWorkoutBtn.classList.add('hidden');
+                } else {
+                    addExerciseToWorkoutBtn.classList.remove('hidden');
+                }
+            });
+
+            closeDatabaseModalBtn.addEventListener('click', () => {
+                exerciseDatabaseModal.classList.add('hidden');
+            });
+
+            exerciseDatabaseModal.addEventListener('click', (e) => {
+                if (e.target === exerciseDatabaseModal) {
+                    exerciseDatabaseModal.classList.add('hidden');
+                }
+            });
+
+            exerciseSearchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredExercises = exerciseDatabase.filter(ex => 
+                    ex.name.toLowerCase().includes(searchTerm) ||
+                    ex.muscleGroup.toLowerCase().includes(searchTerm)
+                );
+                renderExerciseList(filteredExercises);
+            });
+
+            function renderExerciseList(exercises) {
+                exerciseListDiv.innerHTML = '';
+                if (exercises.length === 0) {
+                    exerciseListDiv.innerHTML = '<p class="p-4 text-center text-gray-500">Tidak ada latihan yang ditemukan.</p>';
+                    return;
+                }
+                exercises.forEach(ex => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'exercise-item-db p-2 hover:bg-gray-100 transition-colors';
+                    itemDiv.innerHTML = `<span class="font-semibold text-gray-800">${ex.name}</span> <span class="text-sm text-gray-500">(${ex.muscleGroup})</span>`;
+                    itemDiv.dataset.id = ex.id;
+                    itemDiv.addEventListener('click', () => showExerciseDetail(ex.id));
+                    exerciseListDiv.appendChild(itemDiv);
+                });
+            }
+
+            function showExerciseDetail(exerciseId) {
+                const exercise = exerciseDatabase.find(ex => ex.id === exerciseId);
+                if (!exercise) return;
+
+                detailExerciseName.textContent = exercise.name;
+                detailExerciseDescription.textContent = exercise.description;
+                detailExerciseMuscleGroup.textContent = `Kelompok Otot: ${exercise.muscleGroup}`;
+
+                detailExerciseInstructions.innerHTML = '';
+                exercise.instructions.forEach(inst => {
+                    const li = document.createElement('li');
+                    li.textContent = inst;
+                    detailExerciseInstructions.appendChild(li);
+                });
+
+                if (exercise.imageUrl) {
+                    detailExerciseImage.src = exercise.imageUrl;
+                    detailExerciseImage.classList.remove('hidden');
+                } else {
+                    detailExerciseImage.classList.add('hidden');
+                }
+
+                if (exercise.videoUrl) {
+                    detailExerciseVideo.src = exercise.videoUrl;
+                    detailExerciseVideoContainer.classList.remove('hidden');
+                } else {
+                    detailExerciseVideoContainer.classList.add('hidden');
+                }
+
+                addExerciseToWorkoutBtn.dataset.exerciseName = exercise.name; // Simpan nama latihan untuk tombol tambah
+                exerciseDetailView.classList.remove('hidden');
+            }
+
+            addExerciseToWorkoutBtn.addEventListener('click', () => {
+                const exerciseName = addExerciseToWorkoutBtn.dataset.exerciseName;
+                if (exerciseName && currentActiveGroupForAdding) {
+                    const editableList = document.querySelector(`.editable-list[data-group="${currentActiveGroupForAdding}"]`);
+                    if (editableList) {
+                        const newItem = document.createElement('div');
+                        newItem.className = 'exercise-list-item';
+                        newItem.textContent = exerciseName;
+                        editableList.appendChild(newItem);
+                        editableList.scrollTop = editableList.scrollHeight; // Scroll to bottom
+                        exerciseDatabaseModal.classList.add('hidden'); // Tutup modal
+                        alert(`"${exerciseName}" ditambahkan ke ${currentActiveGroupForAdding}!`);
+                    }
+                }
+            });
+            // --- END Logic for Exercise Database Modal ---
+
+            // --- Event Listeners untuk Timer ---
+            startTimerBtn.addEventListener('click', startTimer);
+            pauseTimerBtn.addEventListener('click', pauseTimer);
+            resetTimerBtn.addEventListener('click', resetTimer);
+
+            timerPresets.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const seconds = parseInt(e.target.dataset.seconds);
+                    timeLeft = seconds;
+                    initialTimerDuration = seconds;
+                    timerDisplay.textContent = formatTime(timeLeft);
+                    pauseTimer(); // Hentikan jika sedang berjalan saat preset dipilih
+                });
+            });
+            // --- Akhir Event Listeners Timer ---
+
+            const today = new Date().getDay(); // Minggu = 0 (data-day="0"), Senin = 1 (data-day="1"), ...
+            const todayButton = document.querySelector(`.day-btn[data-day="${today}"]`);
+            if (todayButton) {
+                todayButton.click();
+            } else {
+                displayWorkout('1'); // Default ke Senin jika tidak ada hari ini
+            }
+        });
+    </script>
+</body>
+</html>
