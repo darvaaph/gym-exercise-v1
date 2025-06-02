@@ -173,6 +173,57 @@
             text-decoration: line-through;
             color: #6B7280; /* Gray-500 */
         }
+
+        /* Custom Notification Pop-up Styles */
+        .custom-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Slightly darker overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000; /* Higher z-index than modals */
+        }
+        .custom-notification-content {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9); /* Slight scale down for animation */
+            opacity: 0; /* Hidden by default */
+            transition: all 0.3s ease-out; /* Smooth transition */
+        }
+        .custom-notification-content.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .custom-notification-content h3 {
+            font-size: 1.75rem; /* Larger title */
+            font-weight: bold;
+            color: #1E3A8A; /* Deep blue */
+            margin-bottom: 1rem;
+        }
+        .custom-notification-content p {
+            color: #4B5563; /* Gray-700 */
+            margin-bottom: 1.5rem;
+        }
+        .custom-notification-content button {
+            background-color: #1E3A8A; /* Deep blue */
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .custom-notification-content button:hover {
+            background-color: #152E6A; /* Darker blue on hover */
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -233,7 +284,7 @@
     </main>
 
     <footer class="text-center py-8 mt-8 text-gray-500">
-        <p>© 2025 Jadwal Latihan Gym Darva.</p>
+        <p>© 2025 Jadwal Latihan Gym Interaktif. Dibuat untuk memaksimalkan progres progres latihan Anda. Selamat berlatih!</p>
     </footer>
 
     <div id="exerciseDatabaseModal" class="modal-overlay hidden">
@@ -264,6 +315,14 @@
                     <button id="addExerciseToWorkoutBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition-colors w-full">Tambahkan ke Jadwal</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="customNotification" class="custom-notification-overlay hidden">
+        <div class="custom-notification-content">
+            <h3 id="notificationTitle"></h3>
+            <p id="notificationMessage"></p>
+            <button id="notificationOkBtn">Oke</button>
         </div>
     </div>
 
@@ -324,7 +383,7 @@
                     'Dorong barbel kembali ke posisi awal, kunci siku di bagian atas gerakan.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/004AAD/FFFFFF?text=Bench+Press',
-                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI6' // Contoh YouTube embed
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls4'
             },
             {
                 id: 'ex002', name: 'Dumbbell Curl', muscleGroup: 'Bisep',
@@ -336,7 +395,7 @@
                     'Turunkan dumbel secara perlahan kembali ke posisi awal dengan kontrol.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/0062D5/FFFFFF?text=Dumbbell+Curl',
-                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI7'
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls5'
             },
             {
                 id: 'ex003', name: 'Barbell Squats', muscleGroup: 'Kaki',
@@ -349,7 +408,7 @@
                     'Dorong kembali ke posisi awal, fokus pada kontraksi otot paha dan bokong.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/5E98E3/FFFFFF?text=Barbell+Squat',
-                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI8'
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls6'
             },
             {
                 id: 'ex004', name: 'Lat Pulldown', muscleGroup: 'Punggung',
@@ -362,7 +421,7 @@
                     'Biarkan bilah kembali ke posisi awal secara perlahan dan terkontrol, regangkan lat Anda.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/A8C7F4/000000?text=Lat+Pulldown',
-                videoUrl: 'https://www.youtube.com/embed/l5_Jb5Fk6aI9'
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls7'
             },
             {
                 id: 'ex005', name: 'Overhead Dumbbell Press', muscleGroup: 'Bahu',
@@ -374,7 +433,7 @@
                     'Jaga inti tubuh tetap kencang sepanjang gerakan.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/004AAD/FFFFFF?text=Overhead+Press',
-                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls0'
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls8'
             },
             {
                 id: 'ex006', name: 'Romanian Deadlifts (RDLs)', muscleGroup: 'Kaki',
@@ -387,7 +446,7 @@
                     'Dorong pinggul ke depan untuk kembali ke posisi awal, kontraksikan bokong di bagian atas.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/0062D5/FFFFFF?text=RDL',
-                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls1'
+                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls9'
             },
             {
                 id: 'ex007', name: 'Cable Crossover', muscleGroup: 'Dada',
@@ -399,7 +458,7 @@
                     'Kembali ke posisi awal secara perlahan, rasakan regangan di dada Anda.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/5E98E3/FFFFFF?text=Cable+Crossover',
-                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls2'
+                videoUrl: 'https://www.youtube.com/embed/JCj-9l9y9tY0'
             },
             {
                 id: 'ex008', name: 'Face Pulls', muscleGroup: 'Bahu',
@@ -411,7 +470,7 @@
                     'Remas bahu belakang Anda di puncak gerakan, lalu lepaskan secara perlahan.'
                 ],
                 imageUrl: 'https://placehold.co/400x250/A8C7F4/000000?text=Face+Pull',
-                videoUrl: 'https://www.youtube.com/embed/qEwKCR5IWls3'
+                videoUrl: 'https://www.youtube.com/embed/JCj-9l9y9tY1'
             }
         ];
         // --- AKHIR DATABASE LATIHAN ---
@@ -441,6 +500,13 @@
         const restTimerSection = document.getElementById('rest-timer');
         // --- Akhir Variabel Timer ---
 
+        // --- Variabel Notifikasi Kustom ---
+        const customNotification = document.getElementById('customNotification');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const notificationOkBtn = document.getElementById('notificationOkBtn');
+        // --- Akhir Variabel Notifikasi Kustom ---
+
         function getTodayDate() {
             const now = new Date();
             const year = now.getFullYear();
@@ -455,13 +521,31 @@
             return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
         }
 
+        function showNotification(title, message) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            customNotification.classList.remove('hidden');
+            // Tambahkan kelas 'show' untuk animasi
+            setTimeout(() => {
+                customNotification.querySelector('.custom-notification-content').classList.add('show');
+            }, 10); // Sedikit delay agar transisi berfungsi
+        }
+
+        function hideNotification() {
+            customNotification.querySelector('.custom-notification-content').classList.remove('show');
+            // Sembunyikan setelah animasi selesai
+            setTimeout(() => {
+                customNotification.classList.add('hidden');
+            }, 300); // Sesuaikan dengan durasi transisi CSS
+        }
+
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
             if (timeLeft === 0 && initialTimerDuration > 0) { // Jika timer direset dan ingin mulai lagi
                 timeLeft = initialTimerDuration;
             } else if (timeLeft === 0 && initialTimerDuration === 0) { // Jika belum ada durasi diatur
-                alert('Pilih durasi timer terlebih dahulu atau atur waktu manual.');
+                showNotification('Pengaturan Timer', 'Pilih durasi timer terlebih dahulu atau atur waktu manual.');
                 isTimerRunning = false;
                 return;
             }
@@ -474,7 +558,7 @@
                     clearInterval(timerInterval);
                     isTimerRunning = false;
                     timerDisplay.textContent = "00:00";
-                    alert('Waktu istirahat selesai!');
+                    showNotification('Waktu Istirahat Selesai!', 'Waktunya untuk set berikutnya! 💪');
                     // Bisa tambahkan suara notifikasi di sini
                 }
             }, 1000);
@@ -790,6 +874,10 @@
                 });
             });
             // --- Akhir Event Listeners Timer ---
+
+            // --- Event Listener Notifikasi Kustom ---
+            notificationOkBtn.addEventListener('click', hideNotification);
+            // --- Akhir Event Listener Notifikasi Kustom ---
 
             const today = new Date().getDay(); // Minggu = 0 (data-day="0"), Senin = 1 (data-day="1"), ...
             const todayButton = document.querySelector(`.day-btn[data-day="${today}"]`);
