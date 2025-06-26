@@ -128,38 +128,43 @@
         .timer-presets button:hover {
             background-color: #3B82F6;
         }
-        /* Checkbox specific styles */
-        .exercise-item-display {
+        /* Checkbox & Button specific styles */
+        .exercise-item-row {
             display: flex;
-            align-items: center; /* Vertically center items */
-            justify-content: space-between; /* Push text to left, checkbox to right */
-            gap: 0.5rem;
-            padding: 0.25rem 0; /* Add some padding */
+            align-items: center;
+            justify-content: space-between; /* Pushes content to edges */
+            padding: 0.25rem 0; /* Padding for each row item */
         }
-        .exercise-item-display .exercise-name {
-            flex-grow: 1; /* Allow name to take available space */
-            line-height: 1.5rem; /* Ensure consistent line height */
+        .exercise-name-text {
+            flex-grow: 1; /* Allows text to take up available space */
+            line-height: 1.5rem;
+            cursor: pointer; /* Indicate clickable area for checkbox */
         }
-        .exercise-item-display input[type="checkbox"] {
-            /* Styling for checkbox */
-            -webkit-appearance: none; /* Hide default checkbox */
+        .exercise-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Space between button and checkbox */
+            flex-shrink: 0; /* Prevents this group from shrinking */
+        }
+        .exercise-checkbox {
+            /* Custom styling for checkbox */
+            -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            width: 20px; /* Custom width */
-            height: 20px; /* Custom height */
-            border: 2px solid #6B7280; /* Border color */
-            border-radius: 4px; /* Slightly rounded corners */
-            background-color: #E5E7EB; /* Light grey background */
+            width: 20px;
+            height: 20px;
+            border: 2px solid #6B7280;
+            border-radius: 4px;
+            background-color: #E5E7EB;
             cursor: pointer;
             position: relative;
-            flex-shrink: 0; /* Prevent checkbox from shrinking */
         }
-        .exercise-item-display input[type="checkbox"]:checked {
-            background-color: #1E3A8A; /* Blue when checked */
+        .exercise-checkbox:checked {
+            background-color: #1E3A8A;
             border-color: #1E3A8A;
         }
-        .exercise-item-display input[type="checkbox"]:checked::after {
-            content: '✔'; /* Checkmark symbol */
+        .exercise-checkbox:checked::after {
+            content: '✔';
             display: block;
             color: white;
             font-size: 14px;
@@ -169,60 +174,103 @@
             transform: translate(-50%, -50%);
             font-weight: bold;
         }
-        .exercise-item-display.completed .exercise-name {
+        .exercise-item-row.completed .exercise-name-text {
             text-decoration: line-through;
             color: #6B7280; /* Gray-500 */
         }
-
-        /* Custom Notification Pop-up Styles */
-        .custom-notification-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Slightly darker overlay */
+        .record-set-btn { /* New button style for inline placement */
+            background-color: #9333ea; /* Purple */
+            color: white;
+            padding: 0.4rem 0.8rem; /* Slightly smaller padding */
+            border-radius: 0.375rem;
+            font-size: 0.75rem; /* Smaller font size */
+            font-weight: bold;
+            transition: background-color 0.2s;
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+        .record-set-btn:hover {
+            background-color: #7e22ce; /* Darker purple */
+        }
+        /* Set Logging Modal Styles */
+        #setLoggingModal .modal-content {
+            max-width: 400px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        #setLoggingModal .modal-tabs {
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 2000; /* Higher z-index than modals */
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
         }
-        .custom-notification-content {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            transform: scale(0.9); /* Slight scale down for animation */
-            opacity: 0; /* Hidden by default */
-            transition: all 0.3s ease-out; /* Smooth transition */
+        #setLoggingModal .modal-tab-btn {
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            color: #6B7280;
+            transition: color 0.2s, border-bottom 0.2s;
+            border-bottom: 2px solid transparent;
         }
-        .custom-notification-content.show {
-            transform: scale(1);
-            opacity: 1;
+        #setLoggingModal .modal-tab-btn.active-tab {
+            color: #1E3A8A;
+            border-bottom-color: #1E3A8A;
         }
-        .custom-notification-content h3 {
-            font-size: 1.75rem; /* Larger title */
-            font-weight: bold;
-            color: #1E3A8A; /* Deep blue */
-            margin-bottom: 1rem;
-        }
-        .custom-notification-content p {
-            color: #4B5563; /* Gray-700 */
+        #setLoggingModal .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
-        .custom-notification-content button {
-            background-color: #1E3A8A; /* Deep blue */
+        #setLoggingModal input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            text-align: center;
+        }
+        #setLoggingModal #addSetBtn {
+            background-color: #1E3A8A;
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: bold;
             transition: background-color 0.2s;
+            width: 100%;
         }
-        .custom-notification-content button:hover {
-            background-color: #152E6A; /* Darker blue on hover */
+        #setLoggingModal #addSetBtn:hover {
+            background-color: #004AAD;
+        }
+        #setLoggingModal #recordedSetsList,
+        #setLoggingModal #historySetsList {
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        #setLoggingModal #recordedSetsList span,
+        #setLoggingModal #historySetsList div {
+            display: block;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed #E5E7EB;
+            color: #4B5563;
+        }
+        #setLoggingModal #recordedSetsList span:last-child,
+        #setLoggingModal #historySetsList div:last-child {
+            border-bottom: none;
+        }
+        #setLoggingModal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #setLoggingModal h3 {
+            font-size: 1.125rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            color: #1E3A8A;
         }
     </style>
 </head>
@@ -237,7 +285,7 @@
         <section id="weekly-schedule" class="mb-8">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-900 text-center md:text-left mb-4 md:mb-0">Pilih Hari Latihan</h2>
-                <button id="openDatabaseBtn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-indigo-700 transition-colors w-full md:w-auto">Lihat Daftar Latihan 📚</button>
+                <button id="openDatabaseBtn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-indigo-700 transition-colors w-full md:w-auto">Jelajahi Database Latihan 📚</button>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4 text-center">
                 <button data-day="1" class="day-btn bg-white p-4 rounded-lg shadow font-semibold">Senin<span class="block text-sm font-normal text-gray-500">Istirahat</span></button>
@@ -251,7 +299,8 @@
         </section>
 
         <section id="workout-details" class="min-h-[400px]">
-            </section>
+            <!-- Detail latihan akan dimuat di sini -->
+        </section>
 
         <section id="rest-timer" class="timer-container mt-12 hidden">
             <h2 class="text-2xl font-bold mb-4">Timer Istirahat</h2>
@@ -284,9 +333,10 @@
     </main>
 
     <footer class="text-center py-8 mt-8 text-gray-500">
-        <p>© 2025 Jadwal Latihan Gym Darva.</p>
+        <p>© 2025 Jadwal Latihan Gym Interaktif. Dibuat untuk memaksimalkan progres progres latihan Anda. Selamat berlatih!</p>
     </footer>
 
+    <!-- Exercise Database Modal -->
     <div id="exerciseDatabaseModal" class="modal-overlay hidden">
         <div class="modal-content w-full md:w-3/4 lg:w-2/3">
             <button id="closeDatabaseModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">✖</button>
@@ -305,8 +355,8 @@
                 <div class="col-span-1 exercise-detail-section bg-gray-50 p-4 rounded-md hidden" id="exerciseDetailView">
                     <h3 class="text-xl font-semibold text-gray-800 mb-3" id="detailExerciseName"></h3>
                     <img id="detailExerciseImage" src="" alt="Gambar Latihan" class="mb-4 hidden">
-                    <div class="relative pb-[56.25%] h-0 mb-4 hidden" id="detailExerciseVideoContainer">
-                        <iframe id="detailExerciseVideo" class="absolute top-0 left-0 w-full h-full rounded-md" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="relative pb-[56.25%] h-0 mb-4" id="detailExerciseVideoContainer">
+                        <!-- iframe utama akan disuntikkan di sini oleh JS -->
                     </div>
                     <p class="text-gray-700 mb-3" id="detailExerciseDescription"></p>
                     <h4 class="font-semibold text-gray-700 mb-2">Instruksi:</h4>
@@ -318,11 +368,36 @@
         </div>
     </div>
 
-    <div id="customNotification" class="custom-notification-overlay hidden">
-        <div class="custom-notification-content">
-            <h3 id="notificationTitle"></h3>
-            <p id="notificationMessage"></p>
-            <button id="notificationOkBtn">Oke</button>
+    <!-- Set Logging Modal -->
+    <div id="setLoggingModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="closeSetLoggingModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">✖</button>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Catat Set untuk <span id="loggingExerciseName" class="text-blue-700"></span></h2>
+            
+            <div class="modal-tabs">
+                <button id="logSetTabBtn" class="modal-tab-btn active-tab">Catat Set</button>
+                <button id="historyTabBtn" class="modal-tab-btn">Riwayat Set</button>
+            </div>
+
+            <div id="logSetContent" class="modal-tab-content">
+                <div class="input-group">
+                    <input type="number" id="logBebanInput" placeholder="Beban (kg)" min="0">
+                    <input type="number" id="logRepetisiInput" placeholder="Repetisi" min="1">
+                    <button id="addSetBtn">Tambah Set</button>
+                </div>
+
+                <h3 class="text-lg font-semibold mt-4 mb-2">Set yang Tercatat Hari Ini:</h3>
+                <div id="recordedSetsList" class="bg-gray-50">
+                    <!-- Recorded sets for today will be displayed here -->
+                </div>
+            </div>
+
+            <div id="historySetContent" class="modal-tab-content hidden">
+                <h3 class="text-lg font-semibold mt-4 mb-2">Riwayat Semua Set:</h3>
+                <div id="historySetsList" class="bg-gray-50">
+                    <!-- All historical sets will be displayed here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -485,13 +560,14 @@
                 videoUrl: 'https://www.youtube.com/embed/pQDrcNoDNVM?si=3-d0FQk4VtM1h3jr'
             },
         ];
-        // --- AKHIR DATABASE LATIHAN ---
 
 
         // Muat data kustom dari localStorage jika ada
         let customWorkoutData = JSON.parse(localStorage.getItem('customGymWorkout')) || {};
         // Data status checkbox latihan yang diselesaikan per tanggal sesi
         let completedExercisesData = JSON.parse(localStorage.getItem('completedGymExercises')) || {};
+        // Data beban dan repetisi yang dicatat, per tanggal sesi
+        let loggedSetsData = JSON.parse(localStorage.getItem('loggedGymSets')) || {};
 
         const detailsContainer = document.getElementById('workout-details');
         const dayButtons = document.querySelectorAll('.day-btn');
@@ -512,12 +588,22 @@
         const restTimerSection = document.getElementById('rest-timer');
         // --- Akhir Variabel Timer ---
 
-        // --- Variabel Notifikasi Kustom ---
-        const customNotification = document.getElementById('customNotification');
-        const notificationTitle = document.getElementById('notificationTitle');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const notificationOkBtn = document.getElementById('notificationOkBtn');
-        // --- Akhir Variabel Notifikasi Kustom ---
+        // --- Variabel Modal Pencatat Set ---
+        const setLoggingModal = document.getElementById('setLoggingModal');
+        const closeSetLoggingModalBtn = document.getElementById('closeSetLoggingModalBtn');
+        const loggingExerciseNameSpan = document.getElementById('loggingExerciseName');
+        const logBebanInput = document.getElementById('logBebanInput');
+        const logRepetisiInput = document.getElementById('logRepetisiInput');
+        const addSetBtn = document.getElementById('addSetBtn');
+        const recordedSetsList = document.getElementById('recordedSetsList');
+        const logSetTabBtn = document.getElementById('logSetTabBtn');
+        const historyTabBtn = document.getElementById('historyTabBtn');
+        const logSetContent = document.getElementById('logSetContent');
+        const historySetContent = document.getElementById('historySetContent');
+        const historySetsList = document.getElementById('historySetsList');
+        let currentLoggingExercise = null; // Latihan yang sedang dicatat set-nya
+        // --- Akhir Variabel Modal Pencatat Set ---
+
 
         function getTodayDate() {
             const now = new Date();
@@ -533,31 +619,13 @@
             return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
         }
 
-        function showNotification(title, message) {
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
-            customNotification.classList.remove('hidden');
-            // Tambahkan kelas 'show' untuk animasi
-            setTimeout(() => {
-                customNotification.querySelector('.custom-notification-content').classList.add('show');
-            }, 10); // Sedikit delay agar transisi berfungsi
-        }
-
-        function hideNotification() {
-            customNotification.querySelector('.custom-notification-content').classList.remove('show');
-            // Sembunyikan setelah animasi selesai
-            setTimeout(() => {
-                customNotification.classList.add('hidden');
-            }, 300); // Sesuaikan dengan durasi transisi CSS
-        }
-
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
             if (timeLeft === 0 && initialTimerDuration > 0) { // Jika timer direset dan ingin mulai lagi
                 timeLeft = initialTimerDuration;
             } else if (timeLeft === 0 && initialTimerDuration === 0) { // Jika belum ada durasi diatur
-                showNotification('Pengaturan Timer', 'Pilih durasi timer terlebih dahulu atau atur waktu manual.');
+                alert('Pilih durasi timer terlebih dahulu atau atur waktu manual.');
                 isTimerRunning = false;
                 return;
             }
@@ -570,7 +638,7 @@
                     clearInterval(timerInterval);
                     isTimerRunning = false;
                     timerDisplay.textContent = "00:00";
-                    showNotification('Waktu Istirahat Selesai!', 'Waktunya untuk set berikutnya! 💪');
+                    alert('Waktu istirahat selesai!');
                     // Bisa tambahkan suara notifikasi di sini
                 }
             }, 1000);
@@ -622,11 +690,14 @@
                         content += `<ul class="list-disc list-inside space-y-2 text-gray-700">`;
                         data.groups[groupName].forEach(exercise => {
                             const isCompleted = completedExercisesData[todayDate]?.[day]?.[exercise] || false;
-                            content += `<li data-exercise-name="${exercise}" class="flex items-center">`; // Flex container for alignment
-                            content += `<span class="exercise-item-display ${isCompleted ? 'completed' : ''}">`; // Apply completed class here
-                            content += `<span class="exercise-name">${exercise}</span>`; // Text
-                            content += `<input type="checkbox" class="exercise-checkbox ml-auto" ${isCompleted ? 'checked' : ''}>`; // Checkbox to the right
-                            content += `</span>`;
+                            
+                            // Updated structure for clean UI
+                            content += `<li data-exercise-name="${exercise}" class="exercise-item-row ${isCompleted ? 'completed' : ''}">`;
+                            content += `<span class="exercise-name-text">${exercise}</span>`; // Text of the exercise
+                            content += `<div class="exercise-actions-group">`; // Group for button and checkbox
+                            content += `<button class="record-set-btn" data-exercise-name="${exercise}">Set</button>`;
+                            content += `<input type="checkbox" class="exercise-checkbox" ${isCompleted ? 'checked' : ''}>`;
+                            content += `</div>`;
                             content += `</li>`;
                         });
                         content += `</ul>`;
@@ -674,10 +745,17 @@
                 // Tambahkan event listener untuk checkbox latihan
                 document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', (e) => {
-                        const li = e.target.closest('li');
+                        const li = e.target.closest('.exercise-item-row'); // Closest li with the new class
                         const exerciseName = li.dataset.exerciseName;
                         const isChecked = e.target.checked;
                         toggleExerciseCompletion(currentActiveDay, exerciseName, isChecked);
+                    });
+                });
+                // Tambahkan event listener untuk tombol "Catat Set" utama
+                document.querySelectorAll('.record-set-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const exerciseName = e.target.dataset.exerciseName;
+                        openSetLoggingModal(exerciseName);
                     });
                 });
             }
@@ -736,16 +814,143 @@
             // Perbarui tampilan item latihan secara langsung
             const exerciseLi = document.querySelector(`li[data-exercise-name="${exerciseName}"]`);
             if (exerciseLi) {
-                const exerciseDisplaySpan = exerciseLi.querySelector('.exercise-item-display');
-                if (exerciseDisplaySpan) {
-                    if (isCompleted) {
-                        exerciseDisplaySpan.classList.add('completed');
-                    } else {
-                        exerciseDisplaySpan.classList.remove('completed');
-                    }
+                // Apply 'completed' class directly to the li.exercise-item-row
+                if (isCompleted) {
+                    exerciseLi.classList.add('completed');
+                } else {
+                    exerciseLi.classList.remove('completed');
                 }
             }
         }
+
+        function recordSet(dayId, exerciseName, beban, repetisi) {
+            const todayDate = getTodayDate();
+            if (!loggedSetsData[todayDate]) {
+                loggedSetsData[todayDate] = {};
+            }
+            if (!loggedSetsData[todayDate][dayId]) {
+                loggedSetsData[todayDate][dayId] = {};
+            }
+            if (!loggedSetsData[todayDate][dayId][exerciseName]) {
+                loggedSetsData[todayDate][dayId][exerciseName] = [];
+            }
+            loggedSetsData[todayDate][dayId][exerciseName].push({ beban, repetisi });
+            localStorage.setItem('loggedGymSets', JSON.stringify(loggedSetsData));
+        }
+
+        // --- Logic for Set Logging Modal ---
+        function openSetLoggingModal(exerciseName) {
+            currentLoggingExercise = exerciseName;
+            loggingExerciseNameSpan.textContent = exerciseName;
+            logBebanInput.value = '';
+            logRepetisiInput.value = '';
+            
+            // Default to "Catat Set" tab
+            showSetLoggingTab('logSet');
+            renderRecordedSets(); // Tampilkan set yang sudah ada untuk hari ini
+            
+            setLoggingModal.classList.remove('hidden');
+        }
+
+        function showSetLoggingTab(tab) {
+            // Remove active class from all tabs
+            logSetTabBtn.classList.remove('active-tab');
+            historyTabBtn.classList.remove('active-tab');
+            // Hide all content areas
+            logSetContent.classList.add('hidden');
+            historySetContent.classList.add('hidden');
+
+            if (tab === 'logSet') {
+                logSetTabBtn.classList.add('active-tab');
+                logSetContent.classList.remove('hidden');
+                renderRecordedSets(); // Re-render today's sets
+            } else if (tab === 'history') {
+                historyTabBtn.classList.add('active-tab');
+                historySetContent.classList.remove('hidden');
+                renderHistoricalSets(); // Render all historical sets
+            }
+        }
+
+        function renderRecordedSets() {
+            const todayDate = getTodayDate();
+            const sets = loggedSetsData[todayDate]?.[currentActiveDay]?.[currentLoggingExercise] || [];
+            recordedSetsList.innerHTML = '';
+            if (sets.length === 0) {
+                recordedSetsList.innerHTML = '<span class="text-gray-500 text-center block">Belum ada set yang dicatat hari ini.</span>';
+                return;
+            }
+            sets.forEach((set, index) => {
+                const setItem = document.createElement('span');
+                setItem.textContent = `Set ${index + 1}: ${set.beban} kg x ${set.repetisi} reps`;
+                recordedSetsList.appendChild(setItem);
+            });
+        }
+
+        function renderHistoricalSets() {
+            historySetsList.innerHTML = '';
+            const allHistory = [];
+
+            // Iterate through all dates in loggedSetsData
+            for (const date in loggedSetsData) {
+                // Check if data exists for the current active day and logging exercise
+                if (loggedSetsData[date][currentActiveDay] && loggedSetsData[date][currentActiveDay][currentLoggingExercise]) {
+                    const setsForThisDay = loggedSetsData[date][currentActiveDay][currentLoggingExercise];
+                    allHistory.push({ date: date, sets: setsForThisDay });
+                }
+            }
+
+            // Sort history by date (newest first)
+            allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (allHistory.length === 0) {
+                historySetsList.innerHTML = '<span class="text-gray-500 text-center block">Belum ada riwayat set untuk latihan ini.</span>';
+                return;
+            }
+
+            allHistory.forEach(dayEntry => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'mb-2 pb-2 border-b border-gray-200';
+                dayDiv.innerHTML = `<h4 class="font-semibold text-gray-800 text-sm mb-1">${dayEntry.date}</h4>`;
+                dayEntry.sets.forEach((set, index) => {
+                    dayDiv.innerHTML += `<span>Set ${index + 1}: ${set.beban} kg x ${set.repetisi} reps</span><br>`;
+                });
+                historySetsList.appendChild(dayDiv);
+            });
+        }
+
+
+        closeSetLoggingModalBtn.addEventListener('click', () => {
+            setLoggingModal.classList.add('hidden');
+            displayWorkout(currentActiveDay, false); // Refresh tampilan utama setelah menutup modal
+        });
+
+        setLoggingModal.addEventListener('click', (e) => {
+            if (e.target === setLoggingModal) {
+                setLoggingModal.classList.add('hidden');
+                displayWorkout(currentActiveDay, false); // Refresh tampilan utama setelah menutup modal
+            }
+        });
+
+        addSetBtn.addEventListener('click', () => {
+            const beban = parseFloat(logBebanInput.value);
+            const repetisi = parseInt(logRepetisiInput.value);
+
+            if (isNaN(beban) || isNaN(repetisi) || beban <= 0 || repetisi <= 0) {
+                alert('Mohon masukkan beban dan repetisi yang valid.');
+                return;
+            }
+
+            recordSet(currentActiveDay, currentLoggingExercise, beban, repetisi);
+            logBebanInput.value = '';
+            logRepetisiInput.value = '';
+            renderRecordedSets(); // Perbarui daftar set di modal "Catat Set"
+        });
+
+        // Event Listeners for Set Logging Modal Tabs
+        logSetTabBtn.addEventListener('click', () => showSetLoggingTab('logSet'));
+        historyTabBtn.addEventListener('click', () => showSetLoggingTab('history'));
+
+        // --- End Logic for Set Logging Modal ---
 
 
         dayButtons.forEach(button => {
@@ -844,13 +1049,21 @@
                 }
 
                 if (exercise.videoUrl) {
-                    detailExerciseVideo.src = exercise.videoUrl;
+                    detailExerciseVideoContainer.innerHTML = `
+                        <iframe class="absolute top-0 left-0 w-full h-full rounded-md" 
+                                src="${exercise.videoUrl}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                        </iframe>
+                    `;
                     detailExerciseVideoContainer.classList.remove('hidden');
                 } else {
+                    detailExerciseVideoContainer.innerHTML = '';
                     detailExerciseVideoContainer.classList.add('hidden');
                 }
 
-                addExerciseToWorkoutBtn.dataset.exerciseName = exercise.name; // Simpan nama latihan untuk tombol tambah
+                addExerciseToWorkoutBtn.dataset.exerciseName = exercise.name;
                 exerciseDetailView.classList.remove('hidden');
             }
 
@@ -863,8 +1076,8 @@
                         newItem.className = 'exercise-list-item';
                         newItem.textContent = exerciseName;
                         editableList.appendChild(newItem);
-                        editableList.scrollTop = editableList.scrollHeight; // Scroll to bottom
-                        exerciseDatabaseModal.classList.add('hidden'); // Tutup modal
+                        editableList.scrollTop = editableList.scrollHeight;
+                        exerciseDatabaseModal.classList.add('hidden');
                         alert(`"${exerciseName}" ditambahkan ke ${currentActiveGroupForAdding}!`);
                     }
                 }
@@ -882,21 +1095,17 @@
                     timeLeft = seconds;
                     initialTimerDuration = seconds;
                     timerDisplay.textContent = formatTime(timeLeft);
-                    pauseTimer(); // Hentikan jika sedang berjalan saat preset dipilih
+                    pauseTimer();
                 });
             });
             // --- Akhir Event Listeners Timer ---
 
-            // --- Event Listener Notifikasi Kustom ---
-            notificationOkBtn.addEventListener('click', hideNotification);
-            // --- Akhir Event Listener Notifikasi Kustom ---
-
-            const today = new Date().getDay(); // Minggu = 0 (data-day="0"), Senin = 1 (data-day="1"), ...
+            const today = new Date().getDay();
             const todayButton = document.querySelector(`.day-btn[data-day="${today}"]`);
             if (todayButton) {
                 todayButton.click();
             } else {
-                displayWorkout('1'); // Default ke Senin jika tidak ada hari ini
+                displayWorkout('1');
             }
         });
     </script>
